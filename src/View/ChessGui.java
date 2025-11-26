@@ -5,6 +5,7 @@ import Model.Board;
 import Model.Piece;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +18,7 @@ public class ChessGui extends JFrame implements ActionListener {
     private int selectedY = -1;
 
     private JPanel boardPanel;
+    private JPanel contentPane;
     private JButton[][] boardSquares = new JButton[8][8];
     private JLabel statusLabel;
 
@@ -25,7 +27,6 @@ public class ChessGui extends JFrame implements ActionListener {
 
         setTitle("Chess");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
 
         initGUI();
 
@@ -35,12 +36,22 @@ public class ChessGui extends JFrame implements ActionListener {
     }
 
     private void initGUI() {
+        contentPane = new JPanel(new BorderLayout());
+
+        Color tableColor = Color.decode("#4E4F3A");
+        contentPane.setBackground(tableColor);
+        contentPane.setBorder(new EmptyBorder(40, 10, 40, 10));
+
+        setContentPane(contentPane);
+
         statusLabel = new JLabel();
-
+        statusLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        statusLabel.setForeground(Color.WHITE);
         statusLabel.setText(controller.getCurrentTurn().toString() + "'s Turn");
-
         statusLabel.setFont(new Font("Arial Narrow", Font.BOLD, 16));
+        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(statusLabel, BorderLayout.NORTH);
+
 
         boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(8, 8));

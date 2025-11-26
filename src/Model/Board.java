@@ -51,4 +51,12 @@ public class Board {
         }
         return board[x][y];
     }
+
+    public void movePiece(int startX, int startY, int endX, int endY ) {
+        Piece piece = getPiece(startX, startY);
+        if (piece != null) {
+            board[endX][endY] = piece; //place piece in a new location
+            board[startX][startY] = null; //remove piece from old location
+        }
+    }
 }
