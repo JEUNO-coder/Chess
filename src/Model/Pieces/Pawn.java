@@ -51,14 +51,16 @@ public class Pawn extends Piece {
 
             return false;
         }
+        //For moving diagonal
             if (deltaY == 1 && deltaX * moveForward == 1) {
+                //Only valid if capturing a piece
 
                 Piece destinationPiece = board.getPiece(endX, endY);
                 if (destinationPiece == null) {
                     return false;
                 }
 
-                if (destinationPiece.getColor() == this.color) {
+                if (destinationPiece.getColor() != this.color) {
                     return true;
                 }
             }

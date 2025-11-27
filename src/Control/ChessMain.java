@@ -22,16 +22,18 @@ public class ChessMain {
 
     public void handleSquareClick(int x, int y) {
         Piece piece = board.getPiece(x, y);
-        if (selectedX == -1) {
+        if (selectedX == -1 && piece.getColor() == currentTurn) {
             if (board.getPiece(x, y) != null) {
                 selectedX = x;
                 selectedY = y;
                 view.setSelectedSquare(selectedX, selectedY);
                 view.updateView(board);
-            } else if (piece != null) {
+            } else {
                 view.showMessage("It is " + currentTurn + "'s turn. Select your piece.", "Invalid Selection", JOptionPane.WARNING_MESSAGE);
             }
-        } else {
+
+        }
+        else {
             if(x == selectedX && y == selectedY) {
                 //click the same square to deselect
                 selectedX = -1;
@@ -84,7 +86,35 @@ public class ChessMain {
         currentTurn = (currentTurn == Piece.Color.WHITE) ? Piece.Color.BLACK : Piece.Color.WHITE;
     }
 
-    private boolean moveCheck(int startX, int startY, int endX, int endY) { return false;}
+    private boolean moveCheck(int startX, int startY, int endX, int endY) {
+        Piece pieceToMove = board.getPiece(startX, startY);
+        Piece capturedPiece = board.getPiece(endX, endY);
+        Piece.Color myColor = currentTurn;
+        Piece.Color enemyColor = (myColor == Piece.Color.WHITE) ? Piece.Color.BLACK : Piece.Color.WHITE;
+
+        //temporary moves the piece
+        board.movePiece(startX, startY, endX, endY);
+        System.out.println("temp moving");
+
+        // Find king and check
+        int[] kingPos = board.findKing(myColor);
+
+        boolean inCheck = false;
+        if (kingPos[0] != -1) {
+            //Check if kings new position is attacked
+            inCheck = board.isSquareAttacked(kingPos[0], kingPos[1], enemyColor);
+
+            //move piece back to orignal location
+            board.movePiece(endX, endY, startX, startY);
+
+            if (capturedPiece != null ) {
+                return inCheck;
+            }
+
+            return inCheck;
+        }
+
+        return false;}
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new ChessMain().start());

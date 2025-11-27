@@ -59,4 +59,46 @@ public class Board {
             board[startX][startY] = null; //remove piece from old location
         }
     }
+
+    //King safety helpers
+    public int[] findKing(Piece.Color color) {
+        for (int x = 0; x < 8; x++ ) {
+            for (int y = 0; y < 8; y++) {
+                Piece piece = getPiece(x, y);
+                    if (piece != null && piece.getType() == Piece.Type.KING && piece.getColor() == color) {
+                        System.out.println("where are u king");
+                        return new int[]{x, y};
+                    }
+                }
+        }
+        return new int[]{-1, -1};
+    }
+
+    //check if square is being attacked
+    //core logic for checking
+    //target x for row being checked
+    //target y for column being checked
+    //byColor the color of the pieces that is attacking
+    //return true if square is being attack
+    public boolean isSquareAttacked(int targetX, int targetY, Piece.Color byColor) {
+        //goes through entire board
+        for (int startX = 0; startX < 8; startX++) {
+            for(int startY =0; startY <8; startY++) {
+                Piece attacker = getPiece(startX, startY);
+
+                    // is the piece on attacker
+                    if (attacker != null && attacker.getColor() == byColor) {
+                        //can piece move?
+                        //valid move method to check geometry and path
+                        if (attacker.validMove(startX, startY, targetX, targetY, this)) {
+                            System.out.println("bitch your king is being attacked don't move me???");
+                            return true;
+                        }
+                    }
+                }
+
+            }
+        System.out.println("king is not being attack phew");
+        return false;
+    }
 }
