@@ -59,6 +59,12 @@ public class Board {
             board[startX][startY] = null; //remove piece from old location
         }
     }
+    //sets a piece ona specific square
+    public void setPiece(int x, int y, Piece piece) {
+        if ( x>=0 && x < 8 && y >= 0 && y < 8) {
+            this.board[x][y] = piece;
+        }
+    }
 
     //King safety helpers
     public int[] findKing(Piece.Color color) {

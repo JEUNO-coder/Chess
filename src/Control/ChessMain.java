@@ -84,6 +84,8 @@ public class ChessMain {
 
         //swaps turn
         currentTurn = (currentTurn == Piece.Color.WHITE) ? Piece.Color.BLACK : Piece.Color.WHITE;
+
+        this.gameOver(currentTurn);
     }
 
     private boolean moveCheck(int startX, int startY, int endX, int endY) {
@@ -93,8 +95,8 @@ public class ChessMain {
         Piece.Color enemyColor = (myColor == Piece.Color.WHITE) ? Piece.Color.BLACK : Piece.Color.WHITE;
 
         //temporary moves the piece
-        board.movePiece(startX, startY, endX, endY);
-        System.out.println("temp moving");
+        board.setPiece(endX, endY, pieceToMove);
+        board.setPiece(startX, startY, null);
 
         // Find king and check
         int[] kingPos = board.findKing(myColor);
@@ -103,19 +105,39 @@ public class ChessMain {
         if (kingPos[0] != -1) {
             //Check if kings new position is attacked
             inCheck = board.isSquareAttacked(kingPos[0], kingPos[1], enemyColor);
-
-            //move piece back to orignal location
-            board.movePiece(endX, endY, startX, startY);
-
-            if (capturedPiece != null ) {
-                return inCheck;
-            }
-
-            return inCheck;
         }
 
-        return false;}
+        board.setPiece(startX, startY, pieceToMove);
+        board.setPiece(endX, endY, capturedPiece);
 
+        return inCheck;
+    }
+
+    public boolean gameOver(Piece.Color color) {
+        //goes through all the pieces of the player's color
+        for ( int startX = 0 ; startX < 8; startX++ ) {
+            for (int startY = 0; startY < 8; startY++) {
+                Piece piece = board.getPiece(startX, startY);
+
+                if(piece != null && piece.getColor() == color) {
+                    //checks goes through all possible destination for this piece
+                    for (int endX = 0; endX < 8; endX++ ) {
+                        for (int endY = 0; endY < 8; endY++) {
+                            if(piece.validMove(startX, startY, endX, endY, board)) {
+                                //king safety check
+
+                                if(!moveCheck(startX, startY, endX, endY)){
+                                    return false; // a legal move was found, so game won't end
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        view.showMessage("Game over" + "/n" + "WINNER: " + getCurrentTurn(), "GAME OVER!", JOptionPane.WARNING_MESSAGE);
+        return true; // if the entire board was check and no legal move was found
+    }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new ChessMain().start());
     }
